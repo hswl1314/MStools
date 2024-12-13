@@ -1,0 +1,102 @@
+setwd("D:/Desktop")
+# 创建示例数据框
+df <- data.frame(
+  Conc = c(5, 2.5, 1.25, 0.625, 0.3125, 0.15625, 0.078125),
+  AA = c(68619120, 29206615, 16247479, 7586211, 4235692, 1846262, 1121494),
+  DHA = c(58619120, 25206615, 14247479, 6586211, 3235692, 1646262, 921494),
+  EPA = c(48619120, 22206615, 12247479, 5586211, 2935692, 1446262, 821494)
+)
+
+# 改进的标准曲线函数
+plot_standard_curves <- function(data, compounds = "all", log = FALSE) {
+  # 处理compounds参数
+  if(compounds[1] == "all") {
+    compounds <- names(data)[names(data) != "Conc"]
+  }
+  
+  # 检查输入的物质是否存在于数据框中
+  if(!all(compounds %in% names(data))) {
+    stop("Some compounds not found in data")
+  }
+  
+  # 创建文件名
+  filename <- paste0("standard_curves_", paste(compounds, collapse = "_"), ".png")
+  
+  # 计算需要的图片布局
+  n_compounds <- length(compounds)
+  
+  # 调整图片尺寸：每增加一个物质，宽度增加5英寸
+  width <- 5 * n_compounds
+  
+  # 打开PNG设备
+  png(filename, width = width, height = 4, units = "in", res = 300)
+  
+  # 设置图片布局
+  par(mfrow = c(1, n_compounds), mar = c(4, 4, 3, 1))
+  
+  # 存储结果
+  results <- list()
+  
+  # 循环处理选定的物质
+  for(compound in compounds) {
+    y_data <- data[[compound]]
+    
+    if(log) {
+      x <- log10(data$Conc)
+      y <- log10(y_data)
+      xlab <- "log(Concentration)"
+      ylab <- paste("log(Peak Area)")
+    } else {
+      x <- data$Conc
+      y <- y_data
+      xlab <- "Concentration"
+      ylab <- paste("Peak Area")
+    }
+    
+    # 计算线性回归
+    fit <- lm(y ~ x)
+    results[[compound]] <- fit
+    
+    # 绘制散点图
+    plot(x, y,
+         xlab = xlab,
+         ylab = ylab,
+         pch = 16,
+         main = paste("Standard Curve of", compound))
+    
+    # 添加趋势线
+    abline(fit, col = "red")
+    
+    # 获取R方和方程参数
+    r2 <- round(summary(fit)$r.squared, 4)
+    coef <- coef(fit)
+    
+    # 添加方程和R方
+    eq <- paste0("y = ", round(coef[2], 2), "x + ", round(coef[1], 2))
+    r2_text <- paste0("R² = ", r2)
+    
+    # 在图上添加文本
+    legend("topleft", 
+           c(eq, r2_text),
+           bty = "n")
+  }
+  
+  # 关闭PNG设备
+  dev.off()
+  
+  # 打印保存的文件名
+  message("Plot saved as: ", filename)
+  
+  return(results)
+}
+
+# 使用示例：
+
+# 分析所有物质（将保存为 standard_curves_AA_DHA_EPA.png）
+results_all <- plot_standard_curves(df, compounds = "all", log = TRUE)
+
+# 分析单个物质（将保存为 standard_curves_AA.png）
+results_AA <- plot_standard_curves(df, compounds = "AA", log = F)
+
+# 分析两个物质（将保存为 standard_curves_AA_DHA.png）
+results_two <- plot_standard_curves(df, compounds = c("AA", "DHA"), log = TRUE)

@@ -29,7 +29,7 @@ app_server <- function(input, output, session) {
   shiny::observeEvent(input$file, {
     shiny::req(input$file)
     tryCatch({
-      data(read.csv(input$file$datapath))
+      data <- read.csv(input$file$datapath)
       output$status <- shiny::renderText("File uploaded successfully!")
     }, error = function(e) {
       output$status <- shiny::renderText(paste("Error reading file:", e$message))

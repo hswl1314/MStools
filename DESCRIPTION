@@ -1,6 +1,6 @@
 Package: MStools
 Title: Tools for LC-MS Analysis
-Version: 0.0.1
+Version: 0.0.2
 Authors@R: 
     person("Dr.Liang", email = "lwlisme2022@163.com", role = c("aut", "cre"))
 Description: Provides tools for LC-MS analysis, including calculation of mobile 
@@ -8,8 +8,15 @@ Description: Provides tools for LC-MS analysis, including calculation of mobile
     spectrometry data analysis.
 License: MIT + file LICENSE
 Encoding: UTF-8
-Imports: 
-    shiny (>= 1.7.0),
-    dplyr (>= 1.0.0)
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
+Depends: 
+    R (>= 3.5.0)
+Imports: 
+    graphics,
+    stats,
+    grDevices,
+    shiny (>= 1.7.0),
+    dplyr (>= 1.0.0)
+
+
