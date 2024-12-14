@@ -17,6 +17,12 @@ Imports:
     stats,
     grDevices,
     shiny (>= 1.7.0),
-    dplyr (>= 1.0.0)
+    dplyr (>= 1.0.0),
+    ggplot2,
+    vegan,
+    ggpubr,
+    ggrepel,
+    patchwork,
+    ellipse
 
 
