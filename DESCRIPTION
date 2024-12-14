@@ -5,7 +5,8 @@ Authors@R:
     person("Dr.Liang", email = "lwlisme2022@163.com", role = c("aut", "cre"))
 Description: Provides tools for LC-MS analysis, including calculation of mobile 
     phase volumes for gradient elution and other useful functions for mass 
-    spectrometry data analysis.
+    spectrometry data analysis. Features include PCA visualization with density 
+    plots and statistical analysis capabilities.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
@@ -16,13 +17,17 @@ Imports:
     graphics,
     stats,
     grDevices,
+    utils,
+    magrittr,
     shiny (>= 1.7.0),
     dplyr (>= 1.0.0),
-    ggplot2,
+    ggplot2 (>= 3.4.0),
     vegan,
     ggpubr,
     ggrepel,
     patchwork,
     ellipse
+URL: https://github.com/hswl1314/MStools
+BugReports: https://github.com/hswl1314/MStools/issues
 
 
