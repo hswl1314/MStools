@@ -6,7 +6,7 @@
 \usage{
 draw_pca(
   df,
-  var_names,
+  var_names = NULL,
   Group,
   group_labels = NULL,
   colors = NULL,
@@ -20,7 +20,8 @@ draw_pca(
 \arguments{
 \item{df}{A data frame containing the variables for PCA analysis}
 
-\item{var_names}{A character vector specifying the names of variables to be used in PCA}
+\item{var_names}{Optional character vector specifying the names of variables to be used in PCA.
+If NULL, all numeric columns except 'Group' and 'SampleID' will be used.}
 
 \item{Group}{A character vector specifying the levels of groups}
 
@@ -63,51 +64,30 @@ df_example <- data.frame(
   TDN = c(
     rnorm(15, 25, 4), rnorm(15, 23, 4), rnorm(15, 27, 4),
     rnorm(15, 24, 4), rnorm(15, 26, 4)
-  ),
-  AP = c(
-    rnorm(15, 50, 8), rnorm(15, 45, 8), rnorm(15, 55, 8),
-    rnorm(15, 48, 8), rnorm(15, 52, 8)
-  ),
-  NAG = c(
-    rnorm(15, 30, 6), rnorm(15, 28, 6), rnorm(15, 32, 6),
-    rnorm(15, 29, 6), rnorm(15, 31, 6)
-  ),
-  BG = c(
-    rnorm(15, 80, 12), rnorm(15, 75, 12), rnorm(15, 85, 12),
-    rnorm(15, 78, 12), rnorm(15, 82, 12)
-  ),
-  LAP = c(
-    rnorm(15, 40, 6), rnorm(15, 37, 6), rnorm(15, 43, 6),
-    rnorm(15, 39, 6), rnorm(15, 41, 6)
-  ),
-  TC = c(
-    rnorm(15, 150, 20), rnorm(15, 140, 20), rnorm(15, 160, 20),
-    rnorm(15, 145, 20), rnorm(15, 155, 20)
-  ),
-  TN = c(
-    rnorm(15, 15, 3), rnorm(15, 14, 3), rnorm(15, 16, 3),
-    rnorm(15, 14.5, 3), rnorm(15, 15.5, 3)
-  ),
-  TP = c(
-    rnorm(15, 3, 0.6), rnorm(15, 2.8, 0.6), rnorm(15, 3.2, 0.6),
-    rnorm(15, 2.9, 0.6), rnorm(15, 3.1, 0.6)
   )
 )
 
-# Use function
-pca_plot <- draw_pca(
+# Example 1: Using all default parameters with automatic variable selection
+pca_plot1 <- draw_pca(
   df = df_example,
-  var_names = c("DOC", "MBC", "TDN", "AP", "NAG", "BG", "LAP", "TC", "TN", "TP"),
+  Group = c("G1", "G2", "G3", "G4", "G5")
+)
+
+# Example 2: Using all parameters with custom settings
+pca_plot2 <- draw_pca(
+  df = df_example,
+  var_names = c("DOC", "MBC", "TDN"),  # Manually specify variables
   Group = c("G1", "G2", "G3", "G4", "G5"),
   group_labels = c("Control", "Treatment 1", "Treatment 2", "Treatment 3", "Treatment 4"),
-  top_n_vars = 3,
-  point_size = 1,
+  colors = c("#1F77B4", "#FF7F0E", "#2CA02C", "#D62728", "#9467BD"),
+  x_limits = c(-2, 2),
+  y_limits = c(-2, 2),
   show_stats = TRUE,
-  y_limits = c(-2,2),
-  x_limits = c(-2,2)
+  point_size = 3,
+  top_n_vars = 5
 )
 
 # Save plot
-ggsave("PCA_plot.png", pca_plot, width = 6, height = 6, limitsize = FALSE)
+ggsave("PCA_plot.png", pca_plot2, width = 6, height = 6, limitsize = FALSE)
 }
 }

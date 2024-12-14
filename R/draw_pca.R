@@ -4,7 +4,8 @@
 #' for visualizing group differences in multivariate data.
 #'
 #' @param df A data frame containing the variables for PCA analysis
-#' @param var_names A character vector specifying the names of variables to be used in PCA
+#' @param var_names Optional character vector specifying the names of variables to be used in PCA. 
+#'                 If NULL, all numeric columns except 'Group' and 'SampleID' will be used.
 #' @param Group A character vector specifying the levels of groups
 #' @param group_labels Optional character vector for custom group labels
 #' @param colors Optional vector of colors for groups
@@ -51,54 +52,33 @@
 #'   TDN = c(
 #'     rnorm(15, 25, 4), rnorm(15, 23, 4), rnorm(15, 27, 4),
 #'     rnorm(15, 24, 4), rnorm(15, 26, 4)
-#'   ),
-#'   AP = c(
-#'     rnorm(15, 50, 8), rnorm(15, 45, 8), rnorm(15, 55, 8),
-#'     rnorm(15, 48, 8), rnorm(15, 52, 8)
-#'   ),
-#'   NAG = c(
-#'     rnorm(15, 30, 6), rnorm(15, 28, 6), rnorm(15, 32, 6),
-#'     rnorm(15, 29, 6), rnorm(15, 31, 6)
-#'   ),
-#'   BG = c(
-#'     rnorm(15, 80, 12), rnorm(15, 75, 12), rnorm(15, 85, 12),
-#'     rnorm(15, 78, 12), rnorm(15, 82, 12)
-#'   ),
-#'   LAP = c(
-#'     rnorm(15, 40, 6), rnorm(15, 37, 6), rnorm(15, 43, 6),
-#'     rnorm(15, 39, 6), rnorm(15, 41, 6)
-#'   ),
-#'   TC = c(
-#'     rnorm(15, 150, 20), rnorm(15, 140, 20), rnorm(15, 160, 20),
-#'     rnorm(15, 145, 20), rnorm(15, 155, 20)
-#'   ),
-#'   TN = c(
-#'     rnorm(15, 15, 3), rnorm(15, 14, 3), rnorm(15, 16, 3),
-#'     rnorm(15, 14.5, 3), rnorm(15, 15.5, 3)
-#'   ),
-#'   TP = c(
-#'     rnorm(15, 3, 0.6), rnorm(15, 2.8, 0.6), rnorm(15, 3.2, 0.6),
-#'     rnorm(15, 2.9, 0.6), rnorm(15, 3.1, 0.6)
 #'   )
 #' )
 #'
-#' # Use function
-#' pca_plot <- draw_pca(
+#' # Example 1: Using all default parameters with automatic variable selection
+#' pca_plot1 <- draw_pca(
 #'   df = df_example,
-#'   var_names = c("DOC", "MBC", "TDN", "AP", "NAG", "BG", "LAP", "TC", "TN", "TP"),
+#'   Group = c("G1", "G2", "G3", "G4", "G5")
+#' )
+#'
+#' # Example 2: Using all parameters with custom settings
+#' pca_plot2 <- draw_pca(
+#'   df = df_example,
+#'   var_names = c("DOC", "MBC", "TDN"),  # Manually specify variables
 #'   Group = c("G1", "G2", "G3", "G4", "G5"),
 #'   group_labels = c("Control", "Treatment 1", "Treatment 2", "Treatment 3", "Treatment 4"),
-#'   top_n_vars = 3,
-#'   point_size = 1,
+#'   colors = c("#1F77B4", "#FF7F0E", "#2CA02C", "#D62728", "#9467BD"),
+#'   x_limits = c(-2, 2),
+#'   y_limits = c(-2, 2),
 #'   show_stats = TRUE,
-#'   y_limits = c(-2,2),
-#'   x_limits = c(-2,2)
+#'   point_size = 3,
+#'   top_n_vars = 5
 #' )
 #'
 #' # Save plot
-#' ggsave("PCA_plot.png", pca_plot, width = 6, height = 6, limitsize = FALSE)
+#' ggsave("PCA_plot.png", pca_plot2, width = 6, height = 6, limitsize = FALSE)
 #' }
-draw_pca <- function(df, var_names, Group, group_labels = NULL, 
+draw_pca <- function(df, var_names = NULL, Group, group_labels = NULL, 
                     colors = NULL,
                     x_limits = NULL, 
                     y_limits = NULL,
@@ -106,7 +86,18 @@ draw_pca <- function(df, var_names, Group, group_labels = NULL,
                     point_size = 3,
                     top_n_vars = 5) {
   
-  # Auto-generate colors
+  # Automatically get variable names if not specified
+  if (is.null(var_names)) {
+    var_names <- setdiff(colnames(df), c("Group", "SampleID"))
+  }
+  
+  # Validate that selected columns are numeric
+  non_numeric_cols <- names(which(sapply(df[var_names], function(x) !is.numeric(x))))
+  if (length(non_numeric_cols) > 0) {
+    stop("The following variables are not numeric: ", paste(non_numeric_cols, collapse = ", "))
+  }
+  
+  # Auto-generate colors if not specified
   if(is.null(colors)) {
     colors <- grDevices::colorRampPalette(c("#1F77B4FF", "#FF7F0EFF", "#2CA02CFF", 
                                 "#D62728FF", "#9467BDFF"))(length(Group))
@@ -128,11 +119,10 @@ draw_pca <- function(df, var_names, Group, group_labels = NULL,
   sites <- data.frame(pca$sites) %>%
     dplyr::mutate(Group = df$Group)
   
-  # Calculate data ranges
+  # Calculate data ranges and set plot limits
   x_range <- range(sites$PC1)
   y_range <- range(sites$PC2)
   
-  # Auto-calculate limits if not provided
   if(is.null(x_limits)) {
     x_margin <- diff(x_range) * 0.2
     x_limits <- c(x_range[1] - x_margin, x_range[2] + x_margin)
@@ -142,7 +132,7 @@ draw_pca <- function(df, var_names, Group, group_labels = NULL,
     y_limits <- c(y_range[1] - y_margin, y_range[2] + y_margin)
   }
   
-  # Extract species scores
+  # Extract and process species scores
   species <- data.frame(pca$species) %>%
     dplyr::mutate(func = factor(rownames(pca$species), 
                         levels = var_names,
@@ -156,7 +146,7 @@ draw_pca <- function(df, var_names, Group, group_labels = NULL,
     dplyr::arrange(dplyr::desc(contrib)) %>%
     dplyr::mutate(rank = dplyr::row_number())
   
-  # Filter variables based on top_n_vars
+  # Filter top contributing variables
   if(top_n_vars > 0) {
     top_vars <- var_contrib$var[1:min(top_n_vars, nrow(var_contrib))]
     species_filtered <- species %>%
@@ -167,7 +157,7 @@ draw_pca <- function(df, var_names, Group, group_labels = NULL,
   adonis_result <- vegan::adonis2(vegan::vegdist(dplyr::select(df, dplyr::all_of(var_names)), 
                                   method="bray") ~ Group, data=df)
   
-  # Calculate ellipse data
+  # Calculate confidence ellipses
   ellipse_data <- lapply(levels(df$Group), function(grp) {
     subset <- dplyr::filter(sites, Group == grp)
     mean_data <- colMeans(subset[, c("PC1", "PC2")])
@@ -177,17 +167,17 @@ draw_pca <- function(df, var_names, Group, group_labels = NULL,
   })
   ellipse_data <- do.call(rbind, ellipse_data)
   
-  # Set annotation position to top right corner
+  # Set annotation position
   annotation_x <- x_limits[2]
   annotation_y <- y_limits[2]
   
-  # Create main plot
+  # Create main PCA plot
   p1 <- ggplot2::ggplot() +
     ggplot2::geom_point(data = sites, 
                ggplot2::aes(x = PC1, y = PC2, fill = Group), 
                size = point_size, color = "transparent", shape = 21)
   
-  # Add arrows and labels if top_n_vars > 0
+  # Add variable arrows and labels if requested
   if(top_n_vars > 0) {
     p1 <- p1 +
       ggplot2::geom_segment(data = species_filtered, 
@@ -202,6 +192,7 @@ draw_pca <- function(df, var_names, Group, group_labels = NULL,
                       size = 3.8)
   }
   
+  # Add plot elements
   p1 <- p1 +
     ggplot2::geom_hline(yintercept = 0, linetype = "dashed", color = "grey") +
     ggplot2::geom_vline(xintercept = 0, linetype = "dashed", color = "grey") +
@@ -224,7 +215,7 @@ draw_pca <- function(df, var_names, Group, group_labels = NULL,
           axis.line = ggplot2::element_line(color = "black"),
           axis.ticks = ggplot2::element_blank())
   
-  # Add PERMANOVA results if show_stats is TRUE
+  # Add PERMANOVA results if requested
   if(show_stats) {
     p1 <- p1 + 
       ggplot2::annotate("text", 
@@ -238,7 +229,7 @@ draw_pca <- function(df, var_names, Group, group_labels = NULL,
                vjust = 1)
   }
   
-  # Extract legend and create legend-free version of main plot
+  # Extract legend and create legend-free version
   legend <- ggpubr::get_legend(p1)
   p11 <- p1 + ggplot2::theme(legend.position = "none")
   
@@ -267,7 +258,7 @@ draw_pca <- function(df, var_names, Group, group_labels = NULL,
     ggplot2::coord_flip()
   
   # Prepare data for box plots
-  otu.pca.data <- data.frame(
+  pca_data <- data.frame(
     PC1 = sites$PC1,
     PC2 = sites$PC2,
     group = sites$Group
@@ -277,7 +268,7 @@ draw_pca <- function(df, var_names, Group, group_labels = NULL,
   my_comparisons <- utils::combn(levels(df$Group), 2, simplify = FALSE)
   
   # Create box plots
-  p4 <- ggplot2::ggplot(otu.pca.data, ggplot2::aes(x = group, y = PC1, 
+  p4 <- ggplot2::ggplot(pca_data, ggplot2::aes(x = group, y = PC1, 
                                  colour = group)) +
     ggplot2::geom_boxplot(outlier.shape = NA) +
     ggplot2::theme_minimal() +
@@ -290,7 +281,7 @@ draw_pca <- function(df, var_names, Group, group_labels = NULL,
     ggplot2::coord_flip() +
     ggpubr::stat_compare_means(comparisons = my_comparisons, label = "p.signif")
   
-  p5 <- ggplot2::ggplot(otu.pca.data, ggplot2::aes(x = group, y = PC2, 
+  p5 <- ggplot2::ggplot(pca_data, ggplot2::aes(x = group, y = PC2, 
                                  colour = group)) +
     ggplot2::geom_boxplot(outlier.shape = NA) +
     ggplot2::theme_minimal() +
@@ -302,7 +293,7 @@ draw_pca <- function(df, var_names, Group, group_labels = NULL,
     ggplot2::xlab("") + ggplot2::ylab("") +
     ggpubr::stat_compare_means(comparisons = my_comparisons, label = "p.signif")
   
-  # Combine all plots
+  # Combine all plots using patchwork
   design <- "166
             266
             345"
