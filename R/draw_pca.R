@@ -87,7 +87,7 @@
 #'   df = df_example,
 #'   var_names = c("DOC", "MBC", "TDN", "AP", "NAG", "BG", "LAP", "TC", "TN", "TP"),
 #'   Group = c("G1", "G2", "G3", "G4", "G5"),
-#'   group_labels = c("Control", "HBV", "CHB", "Cirr", "HCC"),
+#'   group_labels = c("Control", "Treatment 1", "Treatment 2", "Treatment 3", "Treatment 4"),
 #'   top_n_vars = 3,
 #'   point_size = 1,
 #'   show_stats = TRUE,
