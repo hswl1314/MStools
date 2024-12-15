@@ -3,6 +3,7 @@
 export(add_rsd)
 export(calculate_gradient_volume)
 export(draw_pca)
+export(pca_check)
 export(plot_standard_curves)
 export(run_MSdial_to_Jupyter_app)
 importFrom(dplyr,all_of)
