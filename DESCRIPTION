@@ -12,7 +12,8 @@ Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
 Depends: 
-    R (>= 3.5.0)
+    R (>= 3.5.0),
+    ggplot2(>= 3.4.0)
 Imports: 
     graphics,
     stats,
@@ -21,7 +22,6 @@ Imports:
     magrittr,
     shiny (>= 1.7.0),
     dplyr (>= 1.0.0),
-    ggplot2 (>= 3.4.0),
     vegan,
     ggpubr,
     ggrepel,

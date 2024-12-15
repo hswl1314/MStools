@@ -1,10 +1,14 @@
+# Define global variables to avoid R CMD check notes
 utils::globalVariables(c(
   ".data", "Area (Max.)", "Checked",
   "contrib", "func", "PC1", "PC2", "group"
 ))
 
 .onLoad <- function(libname, pkgname) {
-  # Any initialization code if needed
+  # Attach ggplot2 namespace
+  if (!("ggplot2" %in% .packages())) {
+    attachNamespace("ggplot2")
+  }
 }
 
 .onAttach <- function(libname, pkgname) {
@@ -19,5 +23,7 @@ utils::globalVariables(c(
     }
   }
   
-  packageStartupMessage("MStoolsR loaded successfully!")
+  # Welcome message
+  packageStartupMessage(sprintf("MStools version %s loaded successfully!", 
+                              utils::packageVersion("MStools")))
 }
