@@ -7,7 +7,7 @@
 draw_pca(
   df,
   var_names = NULL,
-  Group,
+  Group = NULL,
   group_labels = NULL,
   colors = NULL,
   x_limits = NULL,
@@ -23,7 +23,8 @@ draw_pca(
 \item{var_names}{Optional character vector specifying the names of variables to be used in PCA.
 If NULL, all numeric columns except 'Group' and 'SampleID' will be used.}
 
-\item{Group}{A character vector specifying the levels of groups}
+\item{Group}{Optional character vector specifying the levels of groups.
+If NULL (default), all groups in the data will be used.}
 
 \item{group_labels}{Optional character vector for custom group labels}
 
@@ -43,51 +44,77 @@ If NULL, all numeric columns except 'Group' and 'SampleID' will be used.}
 A ggplot object containing the combined PCA plot
 }
 \description{
-This function creates a comprehensive PCA plot with density distributions and box plots
+Creates a comprehensive PCA plot with density distributions and box plots
 for visualizing group differences in multivariate data.
 }
 \examples{
 \dontrun{
-# Create example data
+# Example 1: Basic usage with all groups
 set.seed(123)
 df_example <- data.frame(
-  SampleID = paste0("Sample_", sprintf("\%03d", 1:75)),
-  Group = rep(c("G1", "G2", "G3", "G4", "G5"), each = 15),
-  DOC = c(
-    rnorm(15, 100, 15), rnorm(15, 90, 15), rnorm(15, 110, 15),
-    rnorm(15, 95, 15), rnorm(15, 105, 15)
-  ),
-  MBC = c(
-    rnorm(15, 200, 30), rnorm(15, 180, 30), rnorm(15, 220, 30),
-    rnorm(15, 190, 30), rnorm(15, 210, 30)
-  ),
-  TDN = c(
-    rnorm(15, 25, 4), rnorm(15, 23, 4), rnorm(15, 27, 4),
-    rnorm(15, 24, 4), rnorm(15, 26, 4)
-  )
+  SampleID = paste0("Sample_", 1:60),
+  Group = rep(c("Control", "Treatment1", "Treatment2"), each = 20),
+  Var1 = rnorm(60, mean = 10, sd = 2),
+  Var2 = rnorm(60, mean = 15, sd = 3),
+  Var3 = rnorm(60, mean = 20, sd = 4)
 )
 
-# Example 1: Using all default parameters with automatic variable selection
-pca_plot1 <- draw_pca(
-  df = df_example,
-  Group = c("G1", "G2", "G3", "G4", "G5")
-)
+# Use all groups automatically
+pca_plot1 <- draw_pca(df = df_example)
 
-# Example 2: Using all parameters with custom settings
+# Example 2: Specify groups and customize appearance
 pca_plot2 <- draw_pca(
   df = df_example,
-  var_names = c("DOC", "MBC", "TDN"),  # Manually specify variables
-  Group = c("G1", "G2", "G3", "G4", "G5"),
-  group_labels = c("Control", "Treatment 1", "Treatment 2", "Treatment 3", "Treatment 4"),
-  colors = c("#1F77B4", "#FF7F0E", "#2CA02C", "#D62728", "#9467BD"),
-  x_limits = c(-2, 2),
-  y_limits = c(-2, 2),
-  show_stats = TRUE,
-  point_size = 3,
-  top_n_vars = 5
+  Group = c("Control", "Treatment1"),  # Use only two groups
+  colors = c("#1F77B4", "#FF7F0E"),
+  point_size = 4,
+  show_stats = TRUE
 )
 
-# Save plot
-ggsave("PCA_plot.png", pca_plot2, width = 6, height = 6, limitsize = FALSE)
+# Example 3: Complex customization
+set.seed(456)
+df_complex <- data.frame(
+  SampleID = paste0("Sample_", 1:100),
+  Group = rep(c("G1", "G2", "G3", "G4"), each = 25),
+  Value1 = rnorm(100, 10, 2),
+  Value2 = rnorm(100, 15, 3),
+  Value3 = rnorm(100, 20, 4),
+  Value4 = rnorm(100, 25, 5)
+)
+
+# Make sure group_labels match the number of groups in the data
+pca_plot3 <- draw_pca(
+  df = df_complex,
+  var_names = c("Value1", "Value2", "Value3", "Value4"),  # Include all variables
+  Group = c("G1", "G2", "G3", "G4"),  # Specify all groups
+  group_labels = c("Control", "Low", "Medium", "High"),  # Labels match group number
+  colors = c("#1F77B4", "#FF7F0E", "#2CA02C", "#D62728"),
+  x_limits = c(-4, 4),
+  y_limits = c(-4, 4),
+  top_n_vars = 3
+)
+
+# Example 4: Minimal plot with no variable arrows
+pca_plot4 <- draw_pca(
+  df = df_complex,
+  Group = c("G1", "G2"),  # Use only two groups
+  show_stats = FALSE,
+  top_n_vars = 0  # No variable arrows
+)
+
+# Example 5: Using subset of variables and groups
+pca_plot5 <- draw_pca(
+  df = df_complex,
+  var_names = c("Value1", "Value2"),  # Use only two variables
+  Group = c("G1", "G2", "G3"),  # Use three groups
+  group_labels = c("Control", "Treatment1", "Treatment2"),  # Labels match selected groups
+  colors = c("#1F77B4", "#FF7F0E", "#2CA02C"),
+  point_size = 3,
+  top_n_vars = 2
+)
+
+# Save plots
+ggsave("pca_all_groups.png", pca_plot1, width = 10, height = 10, dpi = 300)
+ggsave("pca_custom.png", pca_plot3, width = 12, height = 12, dpi = 300)
 }
 }
