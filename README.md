@@ -1,4 +1,4 @@
-# MStools <img src="man/figures/logo.png" align="right" height="139" />
+# MStools 
 
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/yourusername/MStools/workflows/R-CMD-check/badge.svg)](https://github.com/hswl1314/MStools/actions)
