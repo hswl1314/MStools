@@ -21,7 +21,8 @@ devtools::install_github("hswl1314/MStools")
 when_you_add_samples(
   sample_count = 75,           # Number of samples
   minutes_per_sample = 13,     # Time per sample
-  start_time = "09:00"        # Start time (optional)
+  sample_detected = 25,        # Number of samples detected (optional)
+  start_time = "09:00"         # Start time (optional)
 )
 ```
 
