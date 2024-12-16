@@ -2,7 +2,6 @@
 
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/yourusername/MStools/workflows/R-CMD-check/badge.svg)](https://github.com/hswl1314/MStools/actions)
-[![CRAN status](https://www.r-pkg.org/badges/version/MStools)](https://CRAN.R-project.org/package=MStools)
 <!-- badges: end -->
 
 ## Overview
