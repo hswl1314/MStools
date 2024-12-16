@@ -1,9 +1,5 @@
 # MStools 
 
-<!-- badges: start -->
-[![R-CMD-check](https://github.com/yourusername/MStools/workflows/R-CMD-check/badge.svg)](https://github.com/hswl1314/MStools/actions)
-<!-- badges: end -->
-
 ## Overview
 
 MStools provides efficient tools for mass spectrometry data analysis and experiment planning. Designed for LC-MS researchers, it simplifies time management, sample planning, and data analysis.
