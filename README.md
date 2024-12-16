@@ -134,13 +134,13 @@ Found a bug? Have a feature request? Please [open an issue](https://github.com/h
 
 ## License
 
-[MIT](LICENSE.md) © Your Name
+[MIT](LICENSE.md) © Wanli Liang
 
 ## Citation
 
 ```bibtex
 @software{MStools2024,
-  author = {Your Name},
+  author = {Wanli Liang},
   title = {MStools: Mass Spectrometry Analysis Tools},
   year = {2024},
   publisher = {GitHub},
