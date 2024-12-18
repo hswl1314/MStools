@@ -15,7 +15,9 @@ Depends:
     R (>= 3.5.0),
 Imports: 
     shiny (>= 1.7.0),
-    dplyr (>= 1.0.0)  
+    dplyr (>= 1.0.0),
+    readxl,
+    cellranger 
 URL: https://github.com/hswl1314/MStools
 BugReports: https://github.com/hswl1314/MStools/issues
 
