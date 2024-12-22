@@ -69,7 +69,7 @@ add_rsd <- function(df, decimal_places = 2, as_percentage = TRUE,
     stop("Dataframe must contain at least 2 columns to calculate RSD")
   }
   
-  # Select columns for calculation
+  # Select columns for calculation first
   if (!is.null(cols)) {
     if (length(cols) < 2) {
       stop("At least 2 columns required for RSD calculation")
@@ -97,6 +97,19 @@ add_rsd <- function(df, decimal_places = 2, as_percentage = TRUE,
     selected_cols <- df[, matching_cols, drop = FALSE]
   } else {
     selected_cols <- df  # Use all columns if nothing specified
+  }
+  
+  # Check for "NF" values and non-numeric data in selected columns only
+  has_nf <- any(selected_cols == "NF", na.rm = TRUE)
+  is_not_numeric <- !all(sapply(selected_cols, function(x) is.numeric(x) || all(is.na(x))))
+  
+  if (has_nf || is_not_numeric) {
+    message('Please run the following code to process your data first:\n',
+           'df_numeric <- data.frame(lapply(df, function(x) {\n',
+           '    x[x == "NF"] <- NA\n',
+           '    as.numeric(as.character(x))\n',
+           '}))')
+    stop("Selected columns contain 'NF' values or non-numeric data. Please convert data types first.")
   }
   
   # Internal RSD calculation function
