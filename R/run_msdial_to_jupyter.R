@@ -8,9 +8,9 @@
 #' @return A Shiny application object
 #' @examples
 #' \dontrun{
-#' runMSdialApp()
+#' run_msdial_to_jupyter()
 #' }
-runMSdialApp <- function() {
+run_msdial_to_jupyter <- function() {
     # Define UI
     ui <- shiny::fluidPage(
         shiny::titlePanel("MSdial to Jupyter"),
@@ -40,7 +40,7 @@ runMSdialApp <- function() {
             shiny::req(input$file)
             tryCatch({
                 df <- read.csv(input$file$datapath)
-                data_store(df)  # 修正: 不使用 data()
+                data_store(df)
                 output$status <- shiny::renderText("File uploaded successfully!")
             }, error = function(e) {
                 output$status <- shiny::renderText(paste("Error reading file:", e$message))
@@ -110,7 +110,8 @@ runMSdialApp <- function() {
                     NMR$avg_mz <- NULL
                     NMR$av_mz_numeric <- NULL
                     
-                    NMR <- NMR %>% dplyr::select(Checked, dplyr::everything())
+                    NMR <- NMR %>% 
+                        dplyr::select(Checked, dplyr::everything())
                     NMR$`RT [min]` <- NMR$RT
                     NMR <- NMR[, -3]
                     
@@ -120,7 +121,8 @@ runMSdialApp <- function() {
                     matrix <- matrix[-1, ]
                     rownames(matrix) <- NULL
                     matrix$`Area (Max.)` <- apply(matrix, 1, max, na.rm = TRUE)
-                    matrix <- matrix %>% dplyr::select(`Area (Max.)`, dplyr::everything())
+                    matrix <- matrix %>% 
+                        dplyr::select(`Area (Max.)`, dplyr::everything())
                     input1 <- cbind(NMR, matrix)
                     
                     # Save files
