@@ -15,7 +15,7 @@ add_rsd(
 )
 }
 \arguments{
-\item{df}{A dataframe containing numeric values}
+\item{df}{A dataframe containing numeric values or character values that can be converted to numeric}
 
 \item{decimal_places}{Integer specifying the number of decimal places (default = 2)}
 
@@ -38,47 +38,25 @@ Calculate Row-wise Relative Standard Deviation (RSD)
 \examples{
 # Create example data
 test_df <- data.frame(
-  Sample1_val = c(10.2, 12.4, 15.6, 11.3, 13.8, 12.1),
-  Sample1_sd = c(1.1, 1.2, 1.5, 1.1, 1.3, 1.2),
-  Sample2_val = c(20.5, 22.7, 19.9, 21.2, 23.4, 21.8),
-  Sample2_sd = c(2.1, 2.2, 1.9, 2.0, 2.3, 2.1),
-  Control_val = c(30.1, 33.3, 31.5, 32.8, 34.2, 32.5),
-  Control_sd = c(3.0, 3.3, 2.8, 3.1, 3.4, 3.2),
-  Test_A = c(40.5, 43.2, 41.8, 42.6, 44.1, 42.9),
-  Test_B = c(50.3, 53.7, 51.9, 52.4, 54.8, 52.9),
-  QC_1 = c(60.1, 62.4, 61.8, 61.5, 63.2, 61.9),
-  QC_2 = c(70.2, 73.1, 71.5, 72.3, 74.1, 72.8),
-  Notes = c("a", "b", "c", "d", "e", "f")
+  QC1 = c("10.2", "NF", "15.6"),
+  QC2 = c("11.3", "12.4", "NF"),
+  QC3 = c("13.8", "14.2", "15.1"),
+  row.names = c("Sample1", "Sample2", "Sample3")
 )
 
-# Example 1: Basic usage with specific columns
-result1 <- add_rsd(test_df, cols = c(1,3,5))
+# Example 1: Basic usage with all columns
+result1 <- add_rsd(test_df)
 
-# Example 2: Use column range
-result2 <- add_rsd(test_df, cols = 7:10)  # Using Test_A, Test_B, QC_1, QC_2
+# Example 2: Use specific columns
+result2 <- add_rsd(test_df, cols = c(1,3))
 
-# Example 3: Include only columns with "val" pattern
-result3 <- add_rsd(test_df, col_pattern = "val")
+# Example 3: Custom decimal places and non-percentage format
+result3 <- add_rsd(test_df, decimal_places = 3, as_percentage = FALSE)
 
-# Example 4: Exclude columns containing "sd" or "Notes"
-result4 <- add_rsd(test_df, exclude_pattern = "_sd|Notes")
+# Example 4: Custom RSD column name
+result4 <- add_rsd(test_df, rsd_name = "CV\%")
 
-# Example 5: Include columns starting with "Test" or "QC"
-result5 <- add_rsd(test_df, col_pattern = "^(Test|QC)")
-
-# Example 6: More complex pattern matching (columns ending with "val" or starting with "QC")
-result6 <- add_rsd(test_df, col_pattern = "(_val$|^QC)")
-
-# Example 7: Custom decimal places and non-percentage format
-result7 <- add_rsd(test_df, cols = c(1,3,5), decimal_places = 3, as_percentage = FALSE)
-
-# Example 8: Custom RSD column name
-result8 <- add_rsd(test_df, cols = c(1,3,5), rsd_name = "CV\%")
-
-# Example 9: Combine include and exclude patterns
-result9 <- add_rsd(test_df, col_pattern = "Sample", exclude_pattern = "_sd")
-
-# Example 10: Use all numeric columns (excluding Notes)
-result10 <- add_rsd(test_df, exclude_pattern = "Notes")
+# Example 5: Use pattern matching
+result5 <- add_rsd(test_df, col_pattern = "^QC")
 
 }
